@@ -3,6 +3,12 @@
  * @file Service: PromiseTracker
  * @author yumao<yuzhang.lille@gmail.com>
  */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 // Inspired by angular-promise-tracker
 // Add Observable Subscription
@@ -12,6 +18,8 @@ var PromiseTrackerService = /** @class */ (function () {
     function PromiseTrackerService() {
         this.promiseList = [];
         this.delayJustFinished = false;
+        this.isBusyStarted = false;
+        this.onCheckPending = new core_1.EventEmitter();
     }
     PromiseTrackerService.prototype.reset = function (options) {
         var _this = this;
@@ -31,11 +39,17 @@ var PromiseTrackerService = /** @class */ (function () {
             this.delayPromise = setTimeout(function () {
                 _this.delayPromise = null;
                 _this.delayJustFinished = true;
+                if (_this.promiseList.length === 0) {
+                    _this.onCheckPending.emit();
+                }
             }, options.delay);
         }
         if (options.minDuration) {
             this.durationPromise = setTimeout(function () {
                 _this.durationPromise = null;
+                if (_this.promiseList.length === 0) {
+                    _this.onCheckPending.emit();
+                }
             }, options.minDuration + (options.delay || 0));
         }
     };
@@ -59,28 +73,45 @@ var PromiseTrackerService = /** @class */ (function () {
             return;
         }
         this.promiseList.splice(index, 1);
+        if (!this.durationPromise) {
+            this.onCheckPending.emit();
+        }
     };
     PromiseTrackerService.prototype.isActive = function () {
+        var result;
         if (this.delayPromise) {
-            return false;
+            result = false;
         }
-        if (!this.delayJustFinished) {
-            if (this.durationPromise) {
-                return true;
+        else {
+            if (!this.delayJustFinished) {
+                if (this.durationPromise) {
+                    result = true;
+                }
+                else {
+                    result = this.promiseList.length > 0;
+                }
             }
-            return this.promiseList.length > 0;
+            else {
+                this.delayJustFinished = false;
+                if (this.promiseList.length === 0) {
+                    this.durationPromise = undefined;
+                }
+                result = this.promiseList.length > 0;
+            }
         }
-        this.delayJustFinished = false;
-        if (this.promiseList.length === 0) {
-            this.durationPromise = null;
+        if (result === false && this.isBusyStarted) {
+            this.onStopBusy.emit();
+            this.isBusyStarted = false;
         }
-        return this.promiseList.length > 0;
+        else if (result === true && !this.isBusyStarted) {
+            this.onStartBusy.emit();
+            this.isBusyStarted = true;
+        }
+        return result;
     };
-    PromiseTrackerService.decorators = [
-        { type: core_1.Injectable },
-    ];
-    /** @nocollapse */
-    PromiseTrackerService.ctorParameters = function () { return []; };
+    PromiseTrackerService = __decorate([
+        core_1.Injectable()
+    ], PromiseTrackerService);
     return PromiseTrackerService;
 }());
 exports.PromiseTrackerService = PromiseTrackerService;

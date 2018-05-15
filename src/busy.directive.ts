@@ -11,7 +11,9 @@ import {
     ViewContainerRef,
     ComponentFactoryResolver,
     ComponentRef,
-    Injector
+    Injector,
+    EventEmitter,
+    Output
 } from '@angular/core';
 import {Subscription} from 'rxjs/Subscription';
 
@@ -35,6 +37,8 @@ import {BusyBackdropComponent} from './busy-backdrop.component';
 })
 export class BusyDirective implements DoCheck {
     @Input('ngBusy') options: any;
+    @Output() busyStart = new EventEmitter();
+    @Output() busyStop = new EventEmitter();
     private optionsRecord: any;
     private optionsNorm: IBusyConfig;
     template: string;
@@ -49,6 +53,8 @@ export class BusyDirective implements DoCheck {
         private vcRef: ViewContainerRef,
         private injector: Injector
     ) {
+        tracker.onStartBusy = this.busyStart;
+        tracker.onStopBusy = this.busyStop;
     }
 
     // As ngOnChanges does not work on Object detection, ngDoCheck is using

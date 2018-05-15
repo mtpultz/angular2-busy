@@ -2,7 +2,7 @@
  * @file Directive: Busy
  * @author yumao<yuzhang.lille@gmail.com>
  */
-import { DoCheck, ViewContainerRef, ComponentFactoryResolver, Injector } from '@angular/core';
+import { DoCheck, ViewContainerRef, ComponentFactoryResolver, Injector, EventEmitter } from '@angular/core';
 import { PromiseTrackerService } from './promise-tracker.service';
 import { BusyService } from './busy.service';
 /**
@@ -19,6 +19,8 @@ export declare class BusyDirective implements DoCheck {
     private vcRef;
     private injector;
     options: any;
+    busyStart: EventEmitter<{}>;
+    busyStop: EventEmitter<{}>;
     private optionsRecord;
     private optionsNorm;
     template: string;

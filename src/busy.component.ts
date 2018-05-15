@@ -10,12 +10,13 @@ import {
     NgModuleFactory,
     Injectable,
     DoCheck,
-    OnDestroy
+    OnDestroy,
+    ChangeDetectorRef
 } from '@angular/core';
 import {trigger, state, style, transition, animate} from '@angular/animations';
 
 import {PromiseTrackerService} from './promise-tracker.service';
-
+import {Subscription} from 'rxjs/Subscription';
 
 const inactiveStyle = style({
     opacity: 0,
@@ -72,11 +73,17 @@ export class BusyComponent implements DoCheck, OnDestroy {
     template: string;
     message: string;
     private lastMessage: string;
+    sub: Subscription = new Subscription();
 
     constructor(
-        private tracker: PromiseTrackerService
+        private tracker: PromiseTrackerService,
+        private readonly cdr: ChangeDetectorRef
         //,private compiler: Compiler
-    ) {}
+    ) {
+        this.sub.add(tracker.onCheckPending.subscribe(() => {
+            cdr.markForCheck();
+        }));
+    }
 
     ngDoCheck() {
         if (this.message === this.lastMessage) {
@@ -88,6 +95,7 @@ export class BusyComponent implements DoCheck, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.sub.unsubscribe();
         //this.clearDynamicTemplateCache();
     }
 
