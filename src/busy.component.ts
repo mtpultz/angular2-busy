@@ -80,8 +80,8 @@ export class BusyComponent implements DoCheck, OnDestroy {
         private readonly cdr: ChangeDetectorRef
         //,private compiler: Compiler
     ) {
-        this.sub.add(tracker.onCheckPending.subscribe(() => {
-            cdr.markForCheck();
+        this.sub.add(this.tracker.onCheckPending.subscribe(() => {
+            this.cdr.markForCheck();
         }));
     }
 

@@ -27,11 +27,12 @@ var BusyComponent = /** @class */ (function () {
     function BusyComponent(tracker, cdr
         //,private compiler: Compiler
     ) {
+        var _this = this;
         this.tracker = tracker;
         this.cdr = cdr;
         this.sub = new Subscription_1.Subscription();
-        this.sub.add(tracker.onCheckPending.subscribe(function () {
-            cdr.markForCheck();
+        this.sub.add(this.tracker.onCheckPending.subscribe(function () {
+            _this.cdr.markForCheck();
         }));
     }
     BusyComponent.prototype.ngDoCheck = function () {
