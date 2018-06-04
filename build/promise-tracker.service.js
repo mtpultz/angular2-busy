@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Inspired by angular-promise-tracker
 // Add Observable Subscription
 var core_1 = require("@angular/core");
-var Subscription_1 = require("rxjs/Subscription");
+var Subscription_1 = require("rxjs");
 var PromiseTrackerService = /** @class */ (function () {
     function PromiseTrackerService() {
         this.promiseList = [];

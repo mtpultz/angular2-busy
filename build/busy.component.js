@@ -16,7 +16,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var animations_1 = require("@angular/animations");
 var promise_tracker_service_1 = require("./promise-tracker.service");
-var Subscription_1 = require("rxjs/Subscription");
+var Subscription_1 = require("rxjs");
 var inactiveStyle = animations_1.style({
     opacity: 0,
     transform: 'translateY(-40px)'

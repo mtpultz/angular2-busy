@@ -2,7 +2,7 @@
  * @file Busy Config
  * @author yumao<yuzhang.lille@gmail.com>
  */
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 export declare class BusyConfig implements IBusyConfig {
     template: string;
     delay: number;

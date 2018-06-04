@@ -3,7 +3,7 @@
  * @author yumao<yuzhang.lille@gmail.com>
  */
 import { EventEmitter } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 export declare class PromiseTrackerService {
     promiseList: Array<Promise<any> | Subscription>;
     delayPromise: number | any;
